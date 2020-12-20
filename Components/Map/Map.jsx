@@ -12,19 +12,20 @@ const mountainMarker = require('../../assets/AdobeStock_139523686.png');
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'red',
+    borderRadius: 50,
+    borderColor: 'black',
+    borderWidth: 5,
     height: 400,
-    width: '100%',
-    marginTop: 100,
+    width: '90%',
+    marginLeft: '5%',
+    marginTop: 70,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   map: {
     ...StyleSheet.absoluteFillObject,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderRadius: 50,
   },
   marker: {
     width: 20,
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 });
-export default function Map({ munro }) {
+export default function Map({ munro, munros }) {
   const getLocationAsync = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -55,42 +56,67 @@ export default function Map({ munro }) {
 
     const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
     const { latitude, longitude } = location.coords;
-    console.log(location.coords);
-    // setState({ ...state, currentLocation:  });
     return { latitude, longitude };
   };
-  console.log('munro', munro);
+  console.log('munro: ', munro);
+  console.log('munros: ', munros);
   return (
     <View style={styles.container}>
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         region={{
-          longitude: munro.longitude,
-          latitude: munro.latitude,
+          longitude: munro ? munro.longitude : munros[0].longitude,
+          latitude: munro ? munro.latitude : munros[0].latitude,
           latitudeDelta: 0.1,
           longitudeDelta: 0.15,
         }}
       >
-        <Marker
-          key={munro.longitude}
-          coordinate={{
-            longitude: munro.longitude,
-            latitude: munro.latitude,
-          }}
-          title={munro.name}
-          description={munro.description}
-        >
-          <View style={styles.markerContainer}>
-            <Text style={{ paddingRight: 30 }}>{munro.name}</Text>
-            <Image source={mountainMarker} style={styles.marker} />
-          </View>
-        </Marker>
+        {munro ? (
+          <Marker
+            key={munro.longitude}
+            coordinate={{
+              longitude: munro.longitude,
+              latitude: munro.latitude,
+            }}
+            title={munro.name}
+            description={munro.description}
+          >
+            <View style={styles.markerContainer}>
+              <Text style={{ paddingRight: 30 }}>{munro.name}</Text>
+              <Image source={mountainMarker} style={styles.marker} />
+            </View>
+          </Marker>
+        ) : null}
+        {munros && munros.length > 0 ? (
+          munros.map((_munro) => (
+            <Marker
+              key={_munro.longitude}
+              coordinate={{
+                longitude: _munro.longitude,
+                latitude: _munro.latitude,
+              }}
+              title={_munro.name}
+              description={_munro.description}
+            >
+              <View style={styles.markerContainer}>
+                <Text style={{ paddingRight: 30 }}>{_munro.name}</Text>
+                <Image source={mountainMarker} style={styles.marker} />
+              </View>
+            </Marker>
+          ))
+        ) : null}
       </MapView>
     </View>
   );
 }
 
 Map.propTypes = {
-  munro: PropTypes.object.isRequired,
+  munro: PropTypes.oneOf(() => [PropTypes.object, PropTypes.bool]),
+  munros: PropTypes.oneOf(() => [PropTypes.array, PropTypes.bool]),
+};
+
+Map.defaultProps = {
+  munro: false,
+  munros: false,
 };

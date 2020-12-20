@@ -1,18 +1,31 @@
 import React, { useEffect } from 'react';
 import {
-  SafeAreaView, View, Text, Button,
+  SafeAreaView, View, Text, Button, StyleSheet,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { _setMunros } from '../../Redux/Actions';
+import CustomButton from '../../Components/Buttons/CustomButton';
+
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    width: '80%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    backgroundColor: '#ddd',
+    margin: 10,
+  },
+});
 
 export default function HomeScreen({ navigation }) {
   const { munros, loaded } = useSelector((state) => state.munros);
   const dispatch = useDispatch();
-  // const [{ munros, loaded }, setState] = useState({
-  //   munros: [],
-  //   loaded: false,
-  // });
   useEffect(() => {
     const getMunroData = async () => {
       const response = await fetch('https://munroapi.herokuapp.com/munros');
@@ -21,32 +34,44 @@ export default function HomeScreen({ navigation }) {
       const regions = {};
       const munrosFetched = [];
       munroData.forEach((munro, index) => {
-        munrosFetched.push({
+        const munroObject = {
           latitude: munro.latlng_lat,
           longitude: munro.latlng_lng,
           name: munro.name,
           description: munro.meaning,
           id: index,
-        });
+        };
+        munrosFetched.push(munroObject);
         if (regions[munro.region]) {
-          regions[munro.region].push(munro);
+          regions[munro.region].push(munroObject);
         } else {
-          regions[munro.region] = [munro];
+          regions[munro.region] = [munroObject];
         }
       });
-      dispatch(_setMunros(munrosFetched));
-      // setState({
-      //   munros: munrosFetched, loaded: true,
-      // });
+      dispatch(_setMunros({ munros: munrosFetched, regions }));
     };
     getMunroData();
   }, []);
   return (
     <SafeAreaView>
       {loaded ? (
-        <View>
-          <Text>Hello World</Text>
-          <Button title="Go To Map" onPress={() => navigation.navigate('Munros', { prevRoute: 'Home', munros })} />
+        <View style={styles.container}>
+          <CustomButton
+            title="All Munros"
+            onPress={() => navigation.navigate('Munros', { prevRoute: 'Home', munros })}
+            buttonStyle={styles.button}
+            textStyle={styles.buttonText}
+            color="red"
+            accessibilityLabel="View a list of all Munros"
+          />
+          <CustomButton
+            title="Munros By Region"
+            onPress={() => navigation.navigate('MunrosRegions', { prevRoute: 'Home', munros })}
+            buttonStyle={styles.button}
+            textStyle={styles.buttonText}
+            color="red"
+            accessibilityLabel="View a list of all Munros filterable by region"
+          />
         </View>
       ) : (
         <View>

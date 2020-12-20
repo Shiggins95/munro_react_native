@@ -1,4 +1,8 @@
-export const _setMunros = (munros) => ({
+export const _setMunros = (payload) => ({
   type: 'MUNROS_LOADED',
-  payload: munros,
+  payload,
 });
+
+export const _setRegions = () => {
+
+};

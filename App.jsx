@@ -7,6 +7,7 @@ import NavBar from './Views/Navigation/NavBar';
 import HomeScreen from './Views/HomeScreen/HomeScreen';
 import Munros from './Views/Munros/Munros';
 import reducers from './Redux/Reducers/index';
+import MunrosRegions from './Views/Munros/MunrosByRegions';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ export default function App() {
         <Stack.Navigator screenOptions={({ navigation, route }) => getHeaderOptions(navigation, route)}>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Munros" component={Munros} />
+          <Stack.Screen name="MunrosRegions" component={MunrosRegions} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

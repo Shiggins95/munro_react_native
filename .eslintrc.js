@@ -21,5 +21,6 @@ module.exports = {
     'react/forbid-prop-types': 'off',
     'react/jsx-props-no-spreading': 'off',
     'max-len': ['error', { code: 120 }],
+    'no-underscore-dangle': 'off',
   },
 };
