@@ -3,18 +3,14 @@ import {
   View, StyleSheet, Button,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import pick from 'react-native-web/dist/modules/pick';
-import { setMapOptions } from '../../Helpers/SetMapOptions';
+import { useSelector } from 'react-redux';
+import { setHeaderOptions } from '../../Helpers/SetHeaderOptions';
 import PickerModal from '../../Components/Modals/PickerModal';
 import Map from '../../Components/Map/Map';
 
-const background = require('../../assets/GreenBG.png');
-
-const styles = StyleSheet.create({
-});
 export default function Munros({ navigation, route }) {
-  setMapOptions({ navigation, route });
-  const { munros, regions } = route.params;
+  setHeaderOptions({ navigation, route });
+  const { munros } = useSelector((state) => state.munros);
   const [selectedValue, setSelectedValue] = useState(false);
   const startingState = { munros: false, regions: false };
   const [pickerState, setPickerState] = useState(startingState);

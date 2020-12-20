@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView, View, Text, Button,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { _setMunros } from '../../Redux/Actions';
 
 export default function HomeScreen({ navigation }) {
-  const [{ munros, loaded }, setState] = useState({
-    munros: [],
-    loaded: false,
-  });
+  const { munros, loaded } = useSelector((state) => state.munros);
+  const dispatch = useDispatch();
+  // const [{ munros, loaded }, setState] = useState({
+  //   munros: [],
+  //   loaded: false,
+  // });
   useEffect(() => {
     const getMunroData = async () => {
       const response = await fetch('https://munroapi.herokuapp.com/munros');
@@ -30,9 +34,10 @@ export default function HomeScreen({ navigation }) {
           regions[munro.region] = [munro];
         }
       });
-      setState({
-        munros: munrosFetched, loaded: true,
-      });
+      dispatch(_setMunros(munrosFetched));
+      // setState({
+      //   munros: munrosFetched, loaded: true,
+      // });
     };
     getMunroData();
   }, []);

@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStore } from 'redux';
 import { createStackNavigator } from '@react-navigation/stack';
+import { Provider } from 'react-redux';
 import NavBar from './Views/Navigation/NavBar';
 import HomeScreen from './Views/HomeScreen/HomeScreen';
 import Munros from './Views/Munros/Munros';
+import reducers from './Redux/Reducers/index';
 
 const Stack = createStackNavigator();
+
+const store = createStore(reducers);
 
 export default function App() {
   const getHeaderOptions = (navigation, route) => ({
@@ -15,11 +20,13 @@ export default function App() {
     },
   });
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={({ navigation, route }) => getHeaderOptions(navigation, route)}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Munros" component={Munros} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={({ navigation, route }) => getHeaderOptions(navigation, route)}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Munros" component={Munros} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
